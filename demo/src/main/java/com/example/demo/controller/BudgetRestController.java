@@ -16,8 +16,19 @@ public class BudgetRestController {
         return budgetService.findAll();
     }
 
-    @PostMapping("/api/budgets")
+    @PostMapping("/api/budgets")  // FIXED: Corrected typo from "/a pi/budgets"
     public Budget addBudget(@RequestBody Budget budget) {
         return budgetService.addBudget(budget);
+    }
+
+    // NEW: Added for full CRUD (edit and delete)
+    @PutMapping("/api/budgets/{id}")
+    public Budget updateBudget(@PathVariable Long id, @RequestBody Budget budget) {
+        return budgetService.updateBudget(id, budget);
+    }
+
+    @DeleteMapping("/api/budgets/{id}")
+    public void deleteBudget(@PathVariable Long id) {
+        budgetService.deleteBudget(id);
     }
 }

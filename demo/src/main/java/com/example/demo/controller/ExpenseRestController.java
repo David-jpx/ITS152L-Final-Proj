@@ -20,4 +20,15 @@ public class ExpenseRestController {
     public Expense addExpense(@RequestBody Expense expense) {
         return expenseService.addExpense(expense);
     }
+
+    // NEW: Edit and Delete endpoints
+    @PutMapping("/api/expenses/{id}")
+    public Expense updateExpense(@PathVariable Long id, @RequestBody Expense expense) {
+        return expenseService.updateExpense(id, expense);
+    }
+
+    @DeleteMapping("/api/expenses/{id}")
+    public void deleteExpense(@PathVariable Long id) {
+        expenseService.deleteExpense(id);
+    }
 }

@@ -47,25 +47,79 @@
 </head>
 <body>
     <h1>All Expenses</h1>
+    
+    <form method="post" action="/confirm-selected-expenses">
+        <h3>All Expenses</h3>
+        <p><strong>Total Expenses (All):</strong> ₱${totalExpenses?string("0.00")}</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>ID</th>
+                    <th>Department</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Asset ID</th>
+                    <th>Date</th>
+                    <th>Confirmed</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <#list allExpenses as expense>
+                    <tr>
+                        <td>
+                            <#if !expense.confirmed>
+                                <input type="checkbox" name="expenseIds" value="${expense.id}">
+                            </#if>
+                        </td>
+                        <td>${expense.id}</td>
+                        <td>${expense.department}</td>
+                        <td>${expense.description}</td>
+                        <td>₱${expense.amount?string("0.00")}</td>
+                        <td>${expense.assetId}</td>
+                        <td>${expense.date!""}</td>
+                        <td>
+                            <input type="checkbox" ${expense.confirmed?string('checked', '')} disabled>
+                        </td>
+                        <td>
+                            <a href="/edit-expense/${expense.id}">Edit</a>
+                        </td>
+                    </tr>
+                </#list>
+            </tbody>
+        </table>
+        <div style="margin-top: 10px;">
+            <button type="submit" style="background-color: #27ae60; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Confirm Selected Expenses</button>
+        </div>
+    </form>
 
-    <table>
+
+
+    <!-- Budget Overview Table -->
+    <h2 style="margin-top: 30px;">Budget Overview by Department</h2>
+    <table style="margin-top: 10px;">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Description</th>
-                <th>Amount</th>
                 <th>Department</th>
-                <th>Date</th>
+                <th>Initial Budget</th>
+                <th>Current Budget</th>
+                <th>Unconfirmed Expenses</th>
+                <th>Confirmed Expenses</th>
+                <th>Remaining Projected Budget</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>1</td>
-                <td>Network Cable Purchase</td>
-                <td>1500</td>
-                <td>IT Department</td>
-                <td>2025-10-12</td>
-            </tr>
+            <#list budgetComparison?keys as department>
+                <tr>
+                    <td>${department}</td>
+                    <td>₱${budgetComparison[department].currentBudget?string("0.00")}</td>
+                    <td>₱${budgetComparison[department].remainingAfterConfirmed?string("0.00")}</td>
+                    <td>₱${budgetComparison[department].unconfirmedExpenses?string("0.00")}</td>
+                    <td>₱${budgetComparison[department].confirmedExpenses?string("0.00")}</td>
+                    <td>₱${budgetComparison[department].remainingAfterUnconfirmed?string("0.00")}</td>
+                </tr>
+            </#list>
         </tbody>
     </table>
 

@@ -17,15 +17,17 @@ public class Expense {
     private double amount;
     private String description;
     private LocalDate date;
+    private boolean confirmed; // Whether the repair has been confirmed
 
     public Expense() {}
 
-    public Expense(long id, long assetId, double amount, String description, LocalDate date) {
+    public Expense(long id, long assetId, double amount, String description, LocalDate date, boolean confirmed) {
         this.id = id;
         this.assetId = assetId;
         this.amount = amount;
         this.description = description;
         this.date = date;
+        this.confirmed = confirmed;
     }
 
     // Getters and Setters
@@ -44,9 +46,12 @@ public class Expense {
     public LocalDate getDate() { return date; }
     public void setDate(LocalDate date) { this.date = date; }
 
+    public boolean isConfirmed() { return confirmed; }
+    public void setConfirmed(boolean confirmed) { this.confirmed = confirmed; }
+
     @Override
     public int hashCode() {
-        return Objects.hash(id, assetId, amount, description, date);
+        return Objects.hash(id, assetId, amount, description, date, confirmed);
     }
 
     @Override
@@ -58,7 +63,8 @@ public class Expense {
                Objects.equals(assetId, expense.assetId) &&
                Double.compare(amount, expense.amount) == 0 &&
                Objects.equals(description, expense.description) &&
-               Objects.equals(date, expense.date);
+               Objects.equals(date, expense.date) &&
+               Objects.equals(confirmed, expense.confirmed);
     }
 
     @Override
@@ -69,6 +75,7 @@ public class Expense {
                ", amount=" + amount +
                ", description='" + description + '\'' +
                ", date=" + date +
+               ", confirmed=" + confirmed +
                '}';
     }
 }

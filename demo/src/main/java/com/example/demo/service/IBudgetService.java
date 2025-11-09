@@ -6,4 +6,7 @@ import java.util.List;
 public interface IBudgetService {
     List<Budget> findAll();
     Budget addBudget(Budget budget);
+    Budget findById(Long id); // NEW
+    Budget updateBudget(Long id, Budget budget); // NEW
+    void deleteBudget(Long id); // NEW
 }

@@ -12,13 +12,26 @@ public class AssetRestController {
     private IAssetService assetService;
 
     @GetMapping("/api/assets")
-    public List<Asset> getAllAssets() {
+    public List<Asset> getAllAssets(@RequestParam(required = false) String department,
+                                    @RequestParam(required = false) String status) {
+        if (department != null) return assetService.findByDepartment(department);
+        if (status != null) return assetService.findByStatus(status);
         return assetService.findAll();
     }
 
     @PostMapping("/api/assets")
     public Asset addAsset(@RequestBody Asset asset) {
         return assetService.addAsset(asset);
+    }
+
+    @PutMapping("/api/assets/{id}")
+    public Asset updateAsset(@PathVariable Long id, @RequestBody Asset asset) { // NEW
+        return assetService.updateAsset(id, asset);
+    }
+
+    @DeleteMapping("/api/assets/{id}")
+    public void deleteAsset(@PathVariable Long id) { // NEW
+        assetService.deleteAsset(id);
     }
 
     @PutMapping("/api/assets/{id}/approve")

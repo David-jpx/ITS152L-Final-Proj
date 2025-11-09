@@ -48,26 +48,53 @@
 <body>
     <h1>All Budgets</h1>
 
-    <table>
+    <!-- Budget Overview with new format -->
+    <h2>Budget Overview</h2>
+    <table style="margin-bottom: 30px;">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Budget Name</th>
-                <th>Amount</th>
                 <th>Department</th>
-                <th>Approval Status</th>
+                <th>Initial Budget</th>
+                <th>Current Budget</th>
+                <th>Unconfirmed Expenses</th>
+                <th>Confirmed Expenses</th>
+                <th>Remaining Projected Budget</th>
+                <th>Status</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>1</td>
-                <td>Office Equipment</td>
-                <td>25000</td>
-                <td>IT Department</td>
-                <td>Approved</td>
-            </tr>
+            <#list budgets as budget>
+                <#assign confirmedDeptExpense = departmentExpenses[budget.department]!0>
+                <#assign unconfirmedDeptExpense = unconfirmedDepartmentTotals[budget.department]!0>
+                <#assign currentBudget = budget.amount - confirmedDeptExpense>
+                <#assign remainingProjected = budget.amount - (confirmedDeptExpense + unconfirmedDeptExpense)>
+                <tr>
+                    <td>${budget.department}</td>
+                    <td>₱${budget.amount?string("0.00")}</td>
+                    <td>₱${currentBudget?string("0.00")}</td>
+                    <td>₱${unconfirmedDeptExpense?string("0.00")}</td>
+                    <td>₱${confirmedDeptExpense?string("0.00")}</td>
+                    <td>₱${remainingProjected?string("0.00")}</td>
+                    <td>
+                        <#if remainingProjected < 0>
+                            <span style="color: red; font-weight: bold;">OVER BUDGET</span>
+                        <#elseif remainingProjected < budget.amount * 0.2>
+                            <span style="color: orange; font-weight: bold;">LOW BUDGET</span>
+                        <#else>
+                            <span style="color: green; font-weight: bold;">ON TRACK</span>
+                        </#if>
+                    </td>
+                    <td>
+                        <a href="/edit-budget/${budget.id}">Edit</a> |
+                        <a href="/delete-budget/${budget.id}" onclick="return confirm('Are you sure you want to delete this budget?')">Delete</a>
+                    </td>
+                </tr>
+            </#list>
         </tbody>
     </table>
+
+
 
     <div style="margin-top: 20px;">
         <a href="http://localhost:18080/add-budget" class="button-link">Add New Budget</a>
