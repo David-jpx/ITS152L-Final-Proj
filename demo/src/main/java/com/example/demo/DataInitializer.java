@@ -33,6 +33,9 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired
     private com.example.demo.repository.BudgetRepository budgetRepository;
 
+    @Autowired
+    private BudgetLogRepository budgetLogRepository;
+
     @Override
     public void run(String... args) throws Exception {
         // Clear existing data to prevent duplicates
@@ -60,6 +63,70 @@ public class DataInitializer implements CommandLineRunner {
         createSwitchAssets();
         createCableAssets();
         createAssetsForRepairDemo();
+
+        // Create sample budget logs
+        // Load budget logs (initial funding / top-ups) from SAMPLE_DATA.md
+        loadBudgetLogsFromSampleData();
+    }
+
+    private void loadBudgetLogsFromSampleData() {
+        java.io.BufferedReader reader = null;
+        try {
+            // Try to load from classpath first
+            java.io.InputStream is = getClass().getClassLoader().getResourceAsStream("SAMPLE_DATA.md");
+            if (is != null) {
+                reader = new java.io.BufferedReader(new java.io.InputStreamReader(is));
+            } else {
+                // Fallback to filesystem (working directory)
+                java.io.File f = new java.io.File("SAMPLE_DATA.md");
+                if (f.exists()) {
+                    reader = new java.io.BufferedReader(new java.io.FileReader(f));
+                }
+            }
+
+            if (reader == null) return;
+
+            String line;
+            boolean inTable = false;
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                // Detect table separator to start parsing rows
+                if (line.startsWith("|")) {
+                    // skip header separator line like |---|
+                    if (line.matches("\\|\s*-{3,}.*")) {
+                        inTable = true;
+                        continue;
+                    }
+
+                    if (inTable) {
+                        // Parse a table row: | Department | Type | Amount | Description |
+                        String[] cols = line.split("\\|");
+                        // Expecting at least 5 parts because split includes leading/trailing empty segments
+                        if (cols.length >= 5) {
+                            String dept = cols[1].trim();
+                            String type = cols[2].trim();
+                            String amountStr = cols[3].trim().replace("₱", "").replace(",", "");
+                            String desc = cols[4].trim();
+                            try {
+                                double amount = Double.parseDouble(amountStr);
+                                BudgetLog log = new BudgetLog();
+                                log.setDepartment(dept);
+                                // Use positive values for funding/top-ups
+                                log.setLog(amount);
+                                log.setDescription(desc != null && !desc.isEmpty() ? desc : (type + " for " + dept));
+                                budgetLogRepository.save(log);
+                            } catch (NumberFormatException nfe) {
+                                // ignore malformed amount
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try { if (reader != null) reader.close(); } catch (Exception ignore) {}
+        }
     }
     
     private void clearExistingData() {
@@ -67,6 +134,7 @@ public class DataInitializer implements CommandLineRunner {
         expenseRepository.deleteAll();
         assetRepository.deleteAll();
         budgetRepository.deleteAll();
+        budgetLogRepository.deleteAll();
     }
 
     private void createLaptopAssets() {

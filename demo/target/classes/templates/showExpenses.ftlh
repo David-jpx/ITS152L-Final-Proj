@@ -129,7 +129,6 @@
     </table>
 
     <div style="margin-top: 20px;">
-
         <a href="http://localhost:18080" class="button-link">Home Page</a>
     </div>
 </body>

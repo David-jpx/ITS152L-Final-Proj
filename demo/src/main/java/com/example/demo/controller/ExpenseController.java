@@ -4,6 +4,8 @@ import com.example.demo.dto.ExpenseDTO;
 import com.example.demo.model.Expense;
 import com.example.demo.model.Budget;
 import com.example.demo.model.Asset;
+import com.example.demo.BudgetLog;
+import com.example.demo.BudgetLogRepository;
 import com.example.demo.service.IBudgetService;
 import com.example.demo.service.IExpenseService;
 import com.example.demo.service.IAssetService;
@@ -24,6 +26,8 @@ public class ExpenseController {
     private IBudgetService budgetService;
     @Autowired
     private IAssetService assetService;
+    @Autowired
+    private BudgetLogRepository budgetLogRepository;
 
     @GetMapping("/expenses")
     public String findExpenses(Model model) {
@@ -194,19 +198,48 @@ public class ExpenseController {
     }
 
     @PostMapping("/confirm-expense/{id}")
-    public String confirmExpense(@PathVariable Long id) {
+    public String confirmExpense(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         Expense expense = expenseService.findById(id);
-        if (expense != null) {
-            // Mark expense as confirmed
-            expense.setConfirmed(true);
-            expenseService.updateExpense(id, expense);
-            
-            // Update asset status to "Waiting repair"
+        if (expense != null && !expense.isConfirmed()) {
             Asset asset = assetService.findById(expense.getAssetId());
             if (asset != null) {
-                asset.setStatus("Waiting repair");
-                assetService.updateAsset(asset.getId(), asset);
+                Budget budget = budgetService.findAll().stream()
+                    .filter(b -> b.getDepartment().equals(asset.getDepartment()))
+                    .findFirst()
+                    .orElse(null);
+
+                if (budget != null) {
+                    double remainingBudget = budget.getAmount() - expenseService.findAll().stream()
+                        .filter(e -> e.isConfirmed() && asset.getDepartment().equals(assetService.findById(e.getAssetId()).getDepartment()))
+                        .mapToDouble(Expense::getAmount)
+                        .sum();
+
+                    if (remainingBudget >= expense.getAmount()) {
+                        expense.setConfirmed(true);
+                        expenseService.updateExpense(id, expense);
+
+                        asset.setStatus("Under repair");
+                        assetService.updateAsset(asset.getId(), asset);
+
+                        BudgetLog log = new BudgetLog();
+                        log.setDepartment(asset.getDepartment());
+                        log.setLog(-expense.getAmount());
+                        // Asset model uses getDeviceName()
+                        log.setDescription("Repair for asset: " + asset.getDeviceName());
+                        budgetLogRepository.save(log);
+
+                        redirectAttributes.addFlashAttribute("successMessage", "Expense confirmed and budget updated.");
+                    } else {
+                        redirectAttributes.addFlashAttribute("errorMessage", "Not enough budget to confirm expense.");
+                    }
+                } else {
+                    redirectAttributes.addFlashAttribute("errorMessage", "No budget found for this department.");
+                }
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage", "Asset not found.");
             }
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "Expense not found or already confirmed.");
         }
         return "redirect:/expenses";
     }
@@ -249,6 +282,14 @@ public class ExpenseController {
                 if (asset != null) {
                     asset.setStatus("Waiting repair");
                     assetService.updateAsset(asset.getId(), asset);
+                    // Add an entry to Budget History (expense should reduce budget)
+                    BudgetLog log = new BudgetLog();
+                    log.setDepartment(asset.getDepartment());
+                    // Store as negative to indicate budget reduction
+                    log.setLog(-Math.abs(expense.getAmount()));
+                    // Use the expense description as requested
+                    log.setDescription(expense.getDescription());
+                    budgetLogRepository.save(log);
                 }
             }
         }

@@ -97,7 +97,26 @@
         </tbody>
     </table>
 
-
+    <!-- Budget History -->
+    <h2>Budget History</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Department</th>
+                <th>Budget Log</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <#list budgetLogs as log>
+                <tr>
+                    <td>${log.department}</td>
+                    <td>₱${log.log?string("0.00")}</td>
+                    <td>${log.description}</td>
+                </tr>
+            </#list>
+        </tbody>
+    </table>
 
     <div style="margin-top: 20px;">
         <a href="http://localhost:18080" class="button-link">Home Page</a>

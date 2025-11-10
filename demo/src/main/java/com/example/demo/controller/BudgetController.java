@@ -2,6 +2,8 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Budget;
 import com.example.demo.model.Expense;
+import com.example.demo.BudgetLog;
+import com.example.demo.BudgetLogRepository;
 import com.example.demo.service.IBudgetService;
 import com.example.demo.service.IExpenseService;
 import com.example.demo.service.IAssetService;
@@ -23,6 +25,9 @@ public class BudgetController {
 
     @Autowired
     private IAssetService assetService;
+
+    @Autowired
+    private BudgetLogRepository budgetLogRepository;
 
     @GetMapping("/budgets")
     public String findBudgets(Model model) {
@@ -55,20 +60,31 @@ public class BudgetController {
         model.addAttribute("budgets", budgets);
         model.addAttribute("departmentExpenses", departmentExpenses);
         model.addAttribute("unconfirmedDepartmentTotals", unconfirmedDepartmentTotals);
+
+        // Fetch and add budget logs
+        model.addAttribute("budgetLogs", budgetLogRepository.findAll());
+
         return "showBudgets";
     }
-
-
 
     @PostMapping("/update-budget/{id}")
     public String updateBudget(@PathVariable Long id, @RequestParam double amount, @RequestParam String action) {
         Budget budget = budgetService.findById(id);
         if (budget != null) {
+            BudgetLog log = new BudgetLog();
+            log.setDepartment(budget.getDepartment());
+
             if ("add".equals(action)) {
                 budget.setAmount(budget.getAmount() + amount);
+                log.setLog(amount);
+                log.setDescription("Manually added");
             } else if ("deduct".equals(action)) {
                 budget.setAmount(budget.getAmount() - amount);
+                log.setLog(-amount);
+                log.setDescription("Manually deducted");
             }
+            
+            budgetLogRepository.save(log);
             budgetService.updateBudget(id, budget);
         }
         return "redirect:/budgets";
