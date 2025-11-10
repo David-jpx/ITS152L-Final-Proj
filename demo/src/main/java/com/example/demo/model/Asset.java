@@ -15,16 +15,18 @@ public class Asset {
     private String macAddress;
     private String department;
     private String status;  // e.g., "pending", "approved", "rejected", "active"
+    private double price;
     private LocalDate dateLastMaintained;
 
     public Asset() {}
 
-    public Asset(long id, String deviceName, String macAddress, String department, String status, LocalDate dateLastMaintained) {
+    public Asset(long id, String deviceName, String macAddress, String department, String status, double price, LocalDate dateLastMaintained) {
         this.id = id;
         this.deviceName = deviceName;
         this.macAddress = macAddress;
         this.department = department;
         this.status = status;
+        this.price = price;
         this.dateLastMaintained = dateLastMaintained;
     }
 
@@ -44,12 +46,15 @@ public class Asset {
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 
+    public double getPrice() { return price; }
+    public void setPrice(double price) { this.price = price; }
+
     public LocalDate getDateLastMaintained() { return dateLastMaintained; }
     public void setDateLastMaintained(LocalDate dateLastMaintained) { this.dateLastMaintained = dateLastMaintained; }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, deviceName, macAddress, department, status, dateLastMaintained);
+        return Objects.hash(id, deviceName, macAddress, department, status, price, dateLastMaintained);
     }
 
     @Override
@@ -62,6 +67,7 @@ public class Asset {
                Objects.equals(macAddress, asset.macAddress) &&
                Objects.equals(department, asset.department) &&
                Objects.equals(status, asset.status) &&
+               Objects.equals(price, asset.price) &&
                Objects.equals(dateLastMaintained, asset.dateLastMaintained);
     }
 
@@ -73,6 +79,7 @@ public class Asset {
                ", macAddress='" + macAddress + '\'' +
                ", department='" + department + '\'' +
                ", status='" + status + '\'' +
+               ", price=" + price +
                ", dateLastMaintained=" + dateLastMaintained +
                '}';
     }

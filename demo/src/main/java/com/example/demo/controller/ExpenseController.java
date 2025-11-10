@@ -7,6 +7,7 @@ import com.example.demo.model.Asset;
 import com.example.demo.service.IBudgetService;
 import com.example.demo.service.IExpenseService;
 import com.example.demo.service.IAssetService;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -138,34 +139,7 @@ public class ExpenseController {
         return "budgetComparison";
     }
 
-    @GetMapping("/add-expense")
-    public String addExpense(Model model) {
-        Expense expense = new Expense();
-        expense.setConfirmed(false); // Set default to false
-        model.addAttribute("expense", expense);
-        model.addAttribute("budgets", budgetService.findAll());
-        model.addAttribute("assets", assetService.findAll());
-        return "addExpense";
-    }
 
-    @PostMapping("/add-expense")
-    public String addExpenseSubmit(@ModelAttribute Expense expense, Model model) {
-        if (assetService.findById(expense.getAssetId()) == null) {
-            model.addAttribute("error", "Invalid Asset ID: Asset does not exist.");
-            model.addAttribute("budgets", budgetService.findAll());
-            model.addAttribute("assets", assetService.findAll());
-            return "addExpense";
-        }
-        try {
-            expenseService.addExpense(expense);
-            return "redirect:/expenses";
-        } catch (RuntimeException e) {
-            model.addAttribute("error", e.getMessage());
-            model.addAttribute("budgets", budgetService.findAll());
-            model.addAttribute("assets", assetService.findAll());
-            return "addExpense";
-        }
-    }
 
     @GetMapping("/edit-expense/{id}")
     public String editExpense(@PathVariable Long id, Model model) {
@@ -258,7 +232,11 @@ public class ExpenseController {
     }
 
     @PostMapping("/confirm-selected-expenses")
-    public String confirmSelectedExpenses(@RequestParam("expenseIds") List<Long> expenseIds) {
+    public String confirmSelectedExpenses(@RequestParam(value = "expenseIds", required = false) List<Long> expenseIds, RedirectAttributes redirectAttributes) {
+        if (expenseIds == null || expenseIds.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "No expenses selected to confirm.");
+            return "redirect:/expenses";
+        }
         for (Long expenseId : expenseIds) {
             Expense expense = expenseService.findById(expenseId);
             if (expense != null && !expense.isConfirmed()) {

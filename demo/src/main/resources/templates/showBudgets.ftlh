@@ -86,8 +86,11 @@
                         </#if>
                     </td>
                     <td>
-                        <a href="/edit-budget/${budget.id}">Edit</a> |
-                        <a href="/delete-budget/${budget.id}" onclick="return confirm('Are you sure you want to delete this budget?')">Delete</a>
+                        <form action="/update-budget/${budget.id}" method="post" style="display: inline;">
+                            <input type="number" name="amount" step="0.01" required style="width: 100px; padding: 5px;">
+                            <button type="submit" name="action" value="add" style="background-color: #2ecc71; color: white; border: none; padding: 5px 10px; cursor: pointer;">Add</button>
+                            <button type="submit" name="action" value="deduct" style="background-color: #e74c3c; color: white; border: none; padding: 5px 10px; cursor: pointer;">Deduct</button>
+                        </form>
                     </td>
                 </tr>
             </#list>
@@ -97,7 +100,6 @@
 
 
     <div style="margin-top: 20px;">
-        <a href="http://localhost:18080/add-budget" class="button-link">Add New Budget</a>
         <a href="http://localhost:18080" class="button-link">Home Page</a>
     </div>
 </body>

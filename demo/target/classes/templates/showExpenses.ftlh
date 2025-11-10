@@ -47,6 +47,11 @@
 </head>
 <body>
     <h1>All Expenses</h1>
+    <#if error??>
+        <div style="color: red; border: 1px solid red; padding: 10px; margin-bottom: 20px;">
+            ${error}
+        </div>
+    </#if>
     
     <form method="post" action="/confirm-selected-expenses">
         <h3>All Expenses</h3>
@@ -124,7 +129,7 @@
     </table>
 
     <div style="margin-top: 20px;">
-        <a href="http://localhost:18080/add-expense" class="button-link">Add New Expense</a>
+
         <a href="http://localhost:18080" class="button-link">Home Page</a>
     </div>
 </body>

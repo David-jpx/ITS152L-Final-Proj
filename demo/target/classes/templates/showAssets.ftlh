@@ -45,6 +45,7 @@
                 <th>ID</th>
                 <th>Device Name</th>
                 <th>MAC Address</th>
+                <th>Price</th>
                 <th>Department</th>
                 <th>Status</th>
                 <th>Date Last Maintained</th>
@@ -58,6 +59,7 @@
                     <td>${asset.id!""}</td>
                     <td>${asset.deviceName!""}</td>
                     <td>${asset.macAddress!""}</td>
+                    <td>${asset.price?string["#,##0.00"]}</td>
                     <td>${asset.department!""}</td>
                     <td>${asset.status!""}</td>
                     <td>${asset.dateLastMaintained!""}</td>

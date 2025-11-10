@@ -76,6 +76,7 @@ public class DataInitializer implements CommandLineRunner {
         laptop1.setMacAddress("00:1B:44:11:3A:B7");
         laptop1.setDepartment("IT Department");
         laptop1.setStatus("active");
+        laptop1.setPrice(1500.00);
         laptop1.setDateLastMaintained(LocalDate.now().minusMonths(3));
         assetService.addAsset(laptop1);
 
@@ -85,6 +86,7 @@ public class DataInitializer implements CommandLineRunner {
         laptop2.setMacAddress("00:1B:44:11:3A:B8");
         laptop2.setDepartment("IT Department");
         laptop2.setStatus("Needs repair");
+        laptop2.setPrice(2200.00);
         laptop2.setDateLastMaintained(LocalDate.now().minusMonths(8));
         assetService.addAsset(laptop2);
 
@@ -94,6 +96,7 @@ public class DataInitializer implements CommandLineRunner {
         laptop3.setMacAddress("00:1B:44:11:3A:B9");
         laptop3.setDepartment("IT Department");
         laptop3.setStatus("active");
+        laptop3.setPrice(1300.00);
         laptop3.setDateLastMaintained(LocalDate.now().minusMonths(2));
         assetService.addAsset(laptop3);
     }
@@ -105,6 +108,7 @@ public class DataInitializer implements CommandLineRunner {
         router1.setMacAddress("00:1B:44:22:3A:C7");
         router1.setDepartment("Network Infrastructure");
         router1.setStatus("active");
+        router1.setPrice(800.00);
         router1.setDateLastMaintained(LocalDate.now().minusMonths(4));
         assetService.addAsset(router1);
 
@@ -114,6 +118,7 @@ public class DataInitializer implements CommandLineRunner {
         router2.setMacAddress("00:1B:44:22:3A:C8");
         router2.setDepartment("Network Infrastructure");
         router2.setStatus("Needs repair");
+        router2.setPrice(650.00);
         router2.setDateLastMaintained(LocalDate.now().minusMonths(10));
         assetService.addAsset(router2);
     }
@@ -125,6 +130,7 @@ public class DataInitializer implements CommandLineRunner {
         switch1.setMacAddress("00:1B:44:33:3A:D7");
         switch1.setDepartment("Network Infrastructure");
         switch1.setStatus("active");
+        switch1.setPrice(500.00);
         switch1.setDateLastMaintained(LocalDate.now().minusMonths(5));
         assetService.addAsset(switch1);
 
@@ -134,6 +140,7 @@ public class DataInitializer implements CommandLineRunner {
         switch2.setMacAddress("00:1B:44:33:3A:D8");
         switch2.setDepartment("Network Infrastructure");
         switch2.setStatus("active");
+        switch2.setPrice(450.00);
         switch2.setDateLastMaintained(LocalDate.now().minusMonths(1));
         assetService.addAsset(switch2);
     }
@@ -145,6 +152,7 @@ public class DataInitializer implements CommandLineRunner {
         cable1.setMacAddress("N/A");
         cable1.setDepartment("Network Infrastructure");
         cable1.setStatus("active");
+        cable1.setPrice(150.00);
         cable1.setDateLastMaintained(LocalDate.now().minusMonths(6));
         assetService.addAsset(cable1);
 
@@ -154,6 +162,7 @@ public class DataInitializer implements CommandLineRunner {
         cable2.setMacAddress("N/A");
         cable2.setDepartment("Network Infrastructure");
         cable2.setStatus("Needs repair");
+        cable2.setPrice(50.00);
         cable2.setDateLastMaintained(LocalDate.now().minusMonths(12));
         assetService.addAsset(cable2);
     }
@@ -165,6 +174,7 @@ public class DataInitializer implements CommandLineRunner {
         monitor1.setMacAddress("00:1B:44:44:3A:E1");
         monitor1.setDepartment("IT Department");
         monitor1.setStatus("Needs repair");
+        monitor1.setPrice(400.00);
         monitor1.setDateLastMaintained(LocalDate.now().minusMonths(9));
         assetService.addAsset(monitor1);
         
@@ -174,6 +184,7 @@ public class DataInitializer implements CommandLineRunner {
         printer1.setMacAddress("00:1B:44:44:3A:E2");
         printer1.setDepartment("IT Department");
         printer1.setStatus("Needs repair");
+        printer1.setPrice(350.00);
         printer1.setDateLastMaintained(LocalDate.now().minusMonths(7));
         assetService.addAsset(printer1);
     }
